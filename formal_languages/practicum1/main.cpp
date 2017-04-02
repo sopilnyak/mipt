@@ -1,14 +1,12 @@
 #include "language.h"
 #include <iostream>
 #include <map>
-#include <cstdlib>
 
 int main(int argc, char** argv)
 {
     if (argc != 4)
     {
-        std::cerr << "Некорректное число аргументов" << std::endl;
-        return 0;
+        throw std::invalid_argument("Incorrect number of arguments");
     }
 
     int i = 0;
@@ -18,15 +16,14 @@ int main(int argc, char** argv)
 
     if (x != 'a' && x != 'b' && x!= 'c')
     {
-        std::cerr << "Некорректное x" << std::endl;
-        return 0;
+        throw std::invalid_argument("Incorrect x");
     }
 
     Language language;
 
     while ((current = argv[1][i]) != '\0')
     {
-        bool flag = 0; // встретили ли мы знакомый символ
+        bool isCharacterUnknown = 0;
 
         if (current == 'a' || current == 'b' || current == 'c')
         {
@@ -38,33 +35,41 @@ int main(int argc, char** argv)
             {
                 language.notxSymbol();
             }
-            flag = 1;
+            isCharacterUnknown = 1;
         }
         if (current == '1')
         {
             language.emptyWord();
-            flag = 1;
+            isCharacterUnknown = 1;
         }
         if (current == '.')
         {
-            if (!language.concatenation()) return 0;
-            flag = 1;
+            if (!language.concatenation())
+            {
+                return 0;
+            }
+            isCharacterUnknown = 1;
         }
         if (current == '*')
         {
-            if (!language.star(k)) return 0;
-            flag = 1;
+            if (!language.star(k))
+            {
+                return 0;
+            }
+            isCharacterUnknown = 1;
         }
         if (current == '+')
         {
-            if (!language.plus()) return 0;
-            flag = 1;
+            if (!language.plus())
+            {
+                return 0;
+            }
+            isCharacterUnknown = 1;
         }
 
-        if (!flag)
+        if (!isCharacterUnknown)
         {
-            std::cerr << "Посторонний символ" << std::endl;
-            return 0;
+            throw std::invalid_argument("Wrong symbol");
         }
 
         i++;
@@ -73,7 +78,7 @@ int main(int argc, char** argv)
     short answer = language.answer(k);
     if (answer == -1)
     {
-        std::cerr << "Выражение некорректно" << std::endl;
+        throw std::invalid_argument("Expression is incorrect");
     }
     if (answer == 0)
     {

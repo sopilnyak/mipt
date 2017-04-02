@@ -1,5 +1,6 @@
 #include "language.h"
 #include <iostream>
+#include <stdexcept>
 
 Language::Language()
 {
@@ -8,33 +9,39 @@ Language::Language()
 
 Language::~Language()
 {
-  while (!stack.empty())
-  {
-      stack.pop();
-  }
+    while (!stack.empty())
+    {
+        stack.pop();
+    }
 }
 
 void Language::xsymbol()
 {
-    stack.push(std::make_pair(1,1));
+    stack.push(std::make_pair(1, 1));
 }
 
 void Language::notxSymbol()
 {
-    stack.push(std::make_pair(0,1));
+    stack.push(std::make_pair(0, 1));
 }
 
 void Language::emptyWord()
 {
-    stack.push(std::make_pair(0,0));
+    stack.push(std::make_pair(0, 0));
 }
 
 bool Language::concatenation()
 {
-    if (!checkStack()) return 0;
+    if (!checkStack())
+    {
+        return 0;
+    }
     std::pair<int, int> right = stack.top();
     stack.pop();
-    if (!checkStack()) return 0;
+    if (!checkStack())
+    {
+        return 0;
+    }
     std::pair<int, int> left = stack.top();
     stack.pop();
 
@@ -71,14 +78,20 @@ bool Language::star(int k)
         }
     }
     return 1;
-  }
+}
 
-  bool Language::plus()
-  {
-    if (!checkStack()) return 0;
+bool Language::plus()
+{
+    if (!checkStack())
+    {
+        return 0;
+    }
     std::pair<int, int> right = stack.top();
     stack.pop();
-    if (!checkStack()) return 0;
+    if (!checkStack())
+    {
+        return 0;
+    }
     std::pair<int, int> left = stack.top();
     stack.pop();
 
@@ -92,11 +105,14 @@ bool Language::star(int k)
         stack.push(std::make_pair(left.first, left.second));
     }
     return 1;
-  }
+}
 
-  short Language::answer(int k)
-  {
-    if (!checkStack()) return -1;
+short Language::answer(int k)
+{
+    if (!checkStack())
+    {
+        return -1;
+    }
 
     std::pair<int, int> top = stack.top();
     stack.pop();
@@ -113,14 +129,13 @@ bool Language::star(int k)
     {
         return 0;
     }
-  }
+}
 
-  bool Language::checkStack()
-  {
+bool Language::checkStack()
+{
     if (stack.empty())
     {
-        std::cerr << "Выражение некорректно" << std::endl;
-        return 0;
+        throw std::invalid_argument("Expression is incorrect");
     }
     return 1;
 }
